@@ -123,12 +123,10 @@ void parse_input(char *user_input, bool has_batch) {
     } else if (strstr(user_input, "alias") != NULL) {
         int i = 0;
         char *alias_args[2];
-        // char *alias_token = strtok(cur_line, " \t");
         char *alias_token = strtok_r(cur_line, " \t", &cur_line);
         while (alias_token != NULL) {
             alias_args[i] = strdup(alias_token);
 
-            // alias_token = strtok(NULL, " \t");
             alias_token = strtok_r(NULL, " \t", &cur_line);
             i++;
         }
@@ -237,10 +235,8 @@ void parse_input(char *user_input, bool has_batch) {
                     FILE *outfp = fopen(args[n-1], "w");
                     if (outfp == NULL) {
                         char err[] = "Error: Cannot open file ";
-                        // char *finerr = strcat(err, args[n-1]);
                         int err_len = strlen(args[n-1]);
                         char *finerr = strncat(err, args[n-1], err_len);
-                        // finerr = strcat(finerr, ".\n");
                         finerr = strncat(finerr, ".\n", 3);
                         write(STDERR_FILENO, finerr, strlen(finerr));
                         exit(1);
@@ -249,10 +245,8 @@ void parse_input(char *user_input, bool has_batch) {
                     int out = open(args[n-1], O_TRUNC | O_WRONLY);
                     if (out == -1) {
                         char err[] = "Cannot write to file ";
-                        // char *finerr = strcat(err, args[n-1]);
                         int err_len = strlen(args[n-1]);
                         char *finerr = strncat(err, args[n-1], err_len);
-                        // finerr = strcat(finerr, ".\n");
                         finerr = strncat(finerr, ".\n", 3);
                         write(STDERR_FILENO, finerr, strlen(finerr));
                         return;
@@ -262,7 +256,6 @@ void parse_input(char *user_input, bool has_batch) {
                         char err[] = "Cannot write to file ";
                         int err_len = strlen(args[n-1]);
                         char *finerr = strncat(err, args[n-1], err_len);
-                        // finerr = strcat(finerr, ".\n");
                         finerr = strncat(finerr, ".\n", 3);
                         write(STDERR_FILENO, finerr, strlen(finerr));
                         return;
@@ -282,7 +275,7 @@ void parse_input(char *user_input, bool has_batch) {
     }
 }
 
-// deliver output prompts to user
+
 int main(int argc, char **argv) {
     char user_input[512];
     bool isBatch;
@@ -290,13 +283,11 @@ int main(int argc, char **argv) {
     if (argc == 1) {
         fp = stdin;
         isBatch = false;
-    } else if (argc == 2) {
+    } else if (argc == 2) { // batchfile input detected
         fp = fopen(argv[1], "r");
         if (fp == NULL) {
             char err[] = "Error: Cannot open file ";
-            // char *finerr = strcat(err, argv[1]);
             char *finerr = strncat(err, argv[1], strlen(argv[1]));
-            // finerr = strcat(finerr, ".\n");
             finerr = strncat(finerr, ".\n", 3);
             write(STDERR_FILENO, finerr, strlen(finerr));
             exit(1);
@@ -308,13 +299,12 @@ int main(int argc, char **argv) {
         exit(1);
     }
     while (1) {
+        // deliver output prompt to user
         if (isBatch == 0) {
             write(STDOUT_FILENO, "mysh> ", 6);
         }
         char *ret = fgets(user_input, 512, fp);
         if (ret == NULL) {
-            // char msg[] = "not able to take input!\n";
-            // write(STDOUT_FILENO, msg, strlen(msg));
             exit(0);
         }
         parse_input(user_input, isBatch);
