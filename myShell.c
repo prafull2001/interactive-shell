@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
-// Copyright 2022 Dyuthi Nair, Prafull Sharma
+// Copyright 2022 Prafull Sharma
 
 struct alias_node {
     struct alias_node *prev;
@@ -18,7 +18,7 @@ struct alias_node {
 struct alias_node *head = NULL;
 
 
-
+// print aliases in this session
 void print(struct alias_node *node) {
     char *str = calloc(sizeof(char), 100);
     str[0] = '\0';
@@ -28,8 +28,9 @@ void print(struct alias_node *node) {
     strncat(str, "\n", 2);
     write(STDOUT_FILENO, str, strlen(str));
     free(str);
-}
+} 
 
+// parse input to see whether alias, unalias, or batch file was passed in
 void parse_input(char *user_input, bool has_batch) {
     char *cur_line = strdup(user_input);
 
@@ -47,8 +48,6 @@ void parse_input(char *user_input, bool has_batch) {
         }
     }
 
-
-
     if (has_batch) {
         write(STDOUT_FILENO, user_input, strlen(user_input));
     }
@@ -62,7 +61,8 @@ void parse_input(char *user_input, bool has_batch) {
     if (strcmp(user_input, exitstr) == 0) {
         exit(0);
     }
-
+    
+    // head of the alias linked list
     struct alias_node *cur = head;
 
     bool hasRedirection = false;
@@ -202,15 +202,8 @@ void parse_input(char *user_input, bool has_batch) {
         int pid = fork();
         if (pid != -1) {
             if (pid == 0) {
-                // child
                 int n = 0;
-                // char *tokenizer;
-                /*if(hasRedirection) {
-                    tokenizer = "> \t";
-                } else {
-                    tokenizer = " \t";	
-                }*/
-                // char *token = strtok(stringToCheck, " \t");
+                
                 char *token = strtok_r(stringToCheck, " \t", &stringToCheck);
                 char *args[128];
                 while (token != NULL) {
@@ -289,6 +282,7 @@ void parse_input(char *user_input, bool has_batch) {
     }
 }
 
+// deliver output prompts to user
 int main(int argc, char **argv) {
     char user_input[512];
     bool isBatch;
