@@ -12,7 +12,7 @@ Mode is determined upon shell startup
 
 ###  `alias` command
 
-This shell applications aliaising commands using the `alias` key word:
+This shell application aliaises commands using the `alias` key word:
 
 - `alias ls /bin/ls`
 - `ls`
@@ -23,6 +23,9 @@ You can also `unalias` commands:
 
 ### Redirection
 
+Allows the user to send ouput of a command to another specified file using the `>` operator:
+
+- `/bin/ls /tmp > output.txt`
 
 ## How it Works
-When a command is typed into the prompt, shell creates a child process using the `fork` syscall that executes the entered command using the `exec()` syscall while the parent process `wait()`s for the cihld to finish executing.
+When a command is typed into the prompt, shell creates a child process using the `fork` syscall that executes the entered command using the `exec()` syscall while the parent process `wait()`s for the child to finish executing.
